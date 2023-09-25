@@ -17,17 +17,17 @@ pub fn main() !void {
     defer allocator.free(stdin_input);
 
     // Allocate list
-    var calories_list = ArrayList(usize).init(allocator);
-    defer calories_list.deinit();
+    var calories = ArrayList(usize).init(allocator);
+    defer calories.deinit();
 
-    try fillCalorieList(&calories_list, stdin_input);
-    std.mem.sort(usize, calories_list.items, {}, comptime std.sort.desc(usize));
+    try fillCaloriesList(&calories, stdin_input);
+    std.mem.sort(usize, calories.items, {}, comptime std.sort.desc(usize));
 
-    try stdout.writer().print("Part 1: {}\n", .{calories_list.items[0]});
-    try stdout.writer().print("Part 2: {}\n", .{calories_list.items[0] + calories_list.items[1] + calories_list.items[2]});
+    try stdout.writer().print("Part 1: {}\n", .{calories.items[0]});
+    try stdout.writer().print("Part 2: {}\n", .{calories.items[0] + calories.items[1] + calories.items[2]});
 }
 
-fn fillCalorieList(calories_list: *ArrayList(usize), stdin_input: []const u8) !void {
+fn fillCaloriesList(calories: *ArrayList(usize), stdin_input: []const u8) !void {
     // Iterate over all chunks in the input
     var chunks = std.mem.tokenizeSequence(u8, stdin_input, "\n\n");
     while (chunks.next()) |chunk| {
@@ -41,6 +41,6 @@ fn fillCalorieList(calories_list: *ArrayList(usize), stdin_input: []const u8) !v
             chunk_sum += parsed_number;
         }
 
-        try calories_list.append(chunk_sum);
+        try calories.append(chunk_sum);
     }
 }
