@@ -1,11 +1,11 @@
 const std = @import("std");
 
-const stdin = std.io.getStdIn();
-const stdout = std.io.getStdOut();
-
 const ArrayList = std.ArrayList;
 
 pub fn main() !void {
+    const stdin = std.io.getStdIn();
+    const stdout = std.io.getStdOut().writer();
+
     // Use arena allocator for now
     var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
     defer arena.deinit();
@@ -23,8 +23,8 @@ pub fn main() !void {
     try fillCaloriesList(&calories, stdin_input);
     std.mem.sort(usize, calories.items, {}, comptime std.sort.desc(usize));
 
-    try stdout.writer().print("Part 1: {}\n", .{calories.items[0]});
-    try stdout.writer().print("Part 2: {}\n", .{calories.items[0] + calories.items[1] + calories.items[2]});
+    try stdout.print("Part 1: {}\n", .{calories.items[0]});
+    try stdout.print("Part 2: {}\n", .{calories.items[0] + calories.items[1] + calories.items[2]});
 }
 
 fn fillCaloriesList(calories: *ArrayList(usize), stdin_input: []const u8) !void {
