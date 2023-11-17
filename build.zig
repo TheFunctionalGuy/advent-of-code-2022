@@ -26,12 +26,21 @@ pub fn build(b: *Builder) !void {
                         .target = target,
                         .optimize = optimize,
                     });
+
+                    // Install all executables on default command
                     b.installArtifact(exe);
 
                     // === zig build run ===
                     {
+                        const install_exe = b.addInstallArtifact(exe, .{});
+
+                        // Intentional memory leaks
+                        const input_path = try std.mem.concat(b.allocator, u8, &[_][]const u8{ sub_directory.name, "/input" });
+
                         const run_cmd = b.addRunArtifact(exe);
-                        run_cmd.step.dependOn(b.getInstallStep());
+                        run_cmd.setStdIn(.{ .lazy_path = .{ .path = input_path } });
+                        // Only install specific exe
+                        run_cmd.step.dependOn(&install_exe.step);
 
                         // Intentional memory leaks
                         const step_name = try std.mem.concat(b.allocator, u8, &[_][]const u8{ "run ", sub_directory.name });
